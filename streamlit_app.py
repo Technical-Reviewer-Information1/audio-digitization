@@ -8,7 +8,7 @@ import pandas as pd
 st.set_page_config(page_title="音のデジタル表現", layout="wide")
 
 # Title and credits
-st.title("🎵 音のデジタル表現を可視化")
+st.title("🎵 音のデジタル表現")
 st.caption("Created by Dit-Lab.(Daiki ITO)")
 st.caption("Supported by Tomoaki ATSUMI")
 
