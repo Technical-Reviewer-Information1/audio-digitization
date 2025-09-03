@@ -1,6 +1,8 @@
 import streamlit as st
 import numpy as np
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+import plotly.subplots as sp
+import pandas as pd
 
 # Streamlit app configuration
 st.set_page_config(page_title="音のデジタル表現", layout="wide")
@@ -82,27 +84,49 @@ st.header("🔍 デジタル化プロセスの可視化")
 # Step 1: Analog waveform and sampling
 st.subheader("ステップ1: アナログ波形とサンプリング（標本化）")
 
-fig1, ax1 = plt.subplots(figsize=(12, 6))
+fig1 = go.Figure()
 
 # Plot analog waveform
-ax1.plot(t_analog, analog_signal, 'b-', alpha=0.7, linewidth=2, label='アナログ波形')
+fig1.add_trace(go.Scatter(
+    x=t_analog,
+    y=analog_signal,
+    mode='lines',
+    name='アナログ波形',
+    line=dict(color='blue', width=2)
+))
 
 # Plot sampled points
-ax1.plot(t_sampled, sampled_signal, 'ro', markersize=6, label=f'サンプリング点 ({sampling_freq} Hz)')
+fig1.add_trace(go.Scatter(
+    x=t_sampled,
+    y=sampled_signal,
+    mode='markers',
+    name=f'サンプリング点 ({sampling_freq} Hz)',
+    marker=dict(color='red', size=8)
+))
 
 # Draw vertical lines from x-axis to sampled points
 for i, (t, s) in enumerate(zip(t_sampled, sampled_signal)):
-    ax1.plot([t, t], [0, s], 'r--', alpha=0.5, linewidth=1)
+    fig1.add_trace(go.Scatter(
+        x=[t, t],
+        y=[0, s],
+        mode='lines',
+        line=dict(color='red', width=1, dash='dash'),
+        showlegend=False,
+        hoverinfo='skip'
+    ))
 
-ax1.set_xlabel('時間 (秒)')
-ax1.set_ylabel('振幅')
-ax1.set_title(f'サンプリング周波数: {sampling_freq} Hz')
-ax1.legend()
-ax1.grid(True, alpha=0.3)
-ax1.set_xlim(0, 1)
-ax1.set_ylim(-1.2, 1.2)
+fig1.update_layout(
+    title=f'サンプリング周波数: {sampling_freq} Hz',
+    xaxis_title='時間 (秒)',
+    yaxis_title='振幅',
+    xaxis=dict(range=[0, 1]),
+    yaxis=dict(range=[-1.2, 1.2]),
+    showlegend=True,
+    width=900,
+    height=400
+)
 
-st.pyplot(fig1)
+st.plotly_chart(fig1, use_container_width=True)
 
 st.markdown(f"""
 **サンプリングの説明:**
@@ -113,39 +137,68 @@ st.markdown(f"""
 # Step 2: Quantization
 st.subheader("ステップ2: 量子化")
 
-fig2, ax2 = plt.subplots(figsize=(12, 6))
+fig2 = go.Figure()
 
 # Create quantization levels
 quantization_line_levels = np.linspace(-max_amplitude, max_amplitude, quantization_levels + 1)
 
 # Plot quantization levels as horizontal lines
 for level in quantization_line_levels:
-    ax2.axhline(y=level, color='gray', linestyle='-', alpha=0.3, linewidth=1)
+    fig2.add_hline(y=level, line_color='gray', line_width=1, opacity=0.3)
 
 # Plot sampled signal
-ax2.plot(t_sampled, sampled_signal, 'ro', markersize=6, label='サンプリング値', alpha=0.7)
+fig2.add_trace(go.Scatter(
+    x=t_sampled,
+    y=sampled_signal,
+    mode='markers',
+    name='サンプリング値',
+    marker=dict(color='red', size=8, opacity=0.7)
+))
 
 # Plot quantized signal
-ax2.plot(t_sampled, quantized_signal, 'gs', markersize=8, label='量子化値', alpha=0.8)
+fig2.add_trace(go.Scatter(
+    x=t_sampled,
+    y=quantized_signal,
+    mode='markers',
+    name='量子化値',
+    marker=dict(color='green', size=10, symbol='square', opacity=0.8)
+))
 
 # Draw lines showing quantization mapping
 for i, (t, original, quantized) in enumerate(zip(t_sampled, sampled_signal, quantized_signal)):
-    ax2.plot([t, t], [original, quantized], 'k--', alpha=0.4, linewidth=1)
-
-ax2.set_xlabel('時間 (秒)')
-ax2.set_ylabel('振幅')
-ax2.set_title(f'量子化ビット数: {quantization_bits} bit ({quantization_levels} 段階)')
-ax2.legend()
-ax2.grid(True, alpha=0.3)
-ax2.set_xlim(0, 1)
-ax2.set_ylim(-1.2, 1.2)
+    fig2.add_trace(go.Scatter(
+        x=[t, t],
+        y=[original, quantized],
+        mode='lines',
+        line=dict(color='black', width=1, dash='dash'),
+        showlegend=False,
+        hoverinfo='skip'
+    ))
 
 # Add quantization level labels
 for i, level in enumerate(quantization_line_levels[:-1]):
     mid_level = (quantization_line_levels[i] + quantization_line_levels[i+1]) / 2
-    ax2.text(0.02, mid_level, f'レベル{i}', fontsize=8, alpha=0.7)
+    fig2.add_annotation(
+        x=0.02,
+        y=mid_level,
+        text=f'レベル{i}',
+        showarrow=False,
+        font=dict(size=10),
+        opacity=0.7
+    )
 
-st.pyplot(fig2)
+fig2.update_layout(
+    title=f'量子化ビット数: {quantization_bits} bit ({quantization_levels} 段階)',
+    xaxis_title='時間 (秒)',
+    yaxis_title='振幅',
+    xaxis=dict(range=[0, 1]),
+    yaxis=dict(range=[-1.2, 1.2]),
+    showlegend=True,
+    width=900,
+    height=400
+)
+
+st.plotly_chart(fig2, use_container_width=True)
 
 st.markdown(f"""
 **量子化の説明:**
@@ -157,43 +210,46 @@ st.markdown(f"""
 # Step 3: Binary encoding
 st.subheader("ステップ3: 符号化（2進数表現）")
 
-# Show first few samples as binary
+# Show first few samples as binary using DataFrame
 st.markdown("**最初の数サンプルの2進数表現:**")
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.markdown("**時間 (秒)**")
-with col2:
-    st.markdown("**量子化レベル**")
-with col3:
-    st.markdown("**2進数表現**")
 
 # Show first 8 samples or all if less than 8
 num_samples_to_show = min(8, len(t_sampled))
+
+# Create DataFrame
+binary_data = []
 for i in range(num_samples_to_show):
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.text(f"{t_sampled[i]:.3f}")
-    with col2:
-        st.text(f"{quantized_integers[i]}")
-    with col3:
-        binary_repr = format(quantized_integers[i], f'0{quantization_bits}b')
-        st.text(f"{binary_repr}")
+    binary_repr = format(quantized_integers[i], f'0{quantization_bits}b')
+    binary_data.append({
+        '時間 (秒)': f"{t_sampled[i]:.3f}",
+        '量子化レベル': quantized_integers[i],
+        '2進数表現': binary_repr
+    })
+
+df_binary = pd.DataFrame(binary_data)
+st.dataframe(df_binary, use_container_width=True, hide_index=True)
 
 # Final comparison visualization
 st.subheader("比較: アナログ vs デジタル")
 
-fig3, (ax3, ax4) = plt.subplots(2, 1, figsize=(12, 10))
+# Create subplot figure
+fig3 = sp.make_subplots(
+    rows=2, cols=1,
+    subplot_titles=['アナログ信号', f'デジタル信号 ({sampling_freq} Hz, {quantization_bits} bit)'],
+    vertical_spacing=0.1
+)
 
 # Original analog signal
-ax3.plot(t_analog, analog_signal, 'b-', linewidth=2, label='元のアナログ信号')
-ax3.set_ylabel('振幅')
-ax3.set_title('アナログ信号')
-ax3.legend()
-ax3.grid(True, alpha=0.3)
-ax3.set_xlim(0, 1)
-ax3.set_ylim(-1.2, 1.2)
+fig3.add_trace(
+    go.Scatter(
+        x=t_analog,
+        y=analog_signal,
+        mode='lines',
+        name='元のアナログ信号',
+        line=dict(color='blue', width=2)
+    ),
+    row=1, col=1
+)
 
 # Digital reconstruction (step function)
 digital_time = []
@@ -206,17 +262,36 @@ for i in range(len(t_sampled)):
         digital_time.append(t_sampled[i])
         digital_values.append(quantized_signal[i])
 
-ax4.plot(digital_time, digital_values, 'r-', linewidth=2, label='デジタル復元信号', drawstyle='steps-post')
-ax4.plot(t_sampled, quantized_signal, 'ro', markersize=4, alpha=0.7)
-ax4.set_xlabel('時間 (秒)')
-ax4.set_ylabel('振幅')
-ax4.set_title(f'デジタル信号 ({sampling_freq} Hz, {quantization_bits} bit)')
-ax4.legend()
-ax4.grid(True, alpha=0.3)
-ax4.set_xlim(0, 1)
-ax4.set_ylim(-1.2, 1.2)
+fig3.add_trace(
+    go.Scatter(
+        x=digital_time,
+        y=digital_values,
+        mode='lines',
+        name='デジタル復元信号',
+        line=dict(color='red', width=2, shape='hv')
+    ),
+    row=2, col=1
+)
 
-st.pyplot(fig3)
+fig3.add_trace(
+    go.Scatter(
+        x=t_sampled,
+        y=quantized_signal,
+        mode='markers',
+        name='サンプル点',
+        marker=dict(color='red', size=4, opacity=0.7)
+    ),
+    row=2, col=1
+)
+
+fig3.update_xaxes(title_text='時間 (秒)', range=[0, 1], row=2, col=1)
+fig3.update_yaxes(title_text='振幅', range=[-1.2, 1.2])
+fig3.update_layout(
+    height=600,
+    showlegend=True
+)
+
+st.plotly_chart(fig3, use_container_width=True)
 
 # Summary and insights
 st.header("📝 まとめと考察")
