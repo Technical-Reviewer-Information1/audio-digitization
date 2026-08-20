@@ -1,0 +1,115 @@
+  <section class="step" id="step1">
+    <h2><span class="no">STEP 1</span>標本化・量子化・符号化を動かす</h2>
+    <p class="desc">本文の図1と同じ波形です。<strong>標本化周波数</strong>と<strong>量子化ビット数</strong>を変えると、読み取る点と2進法の並びが変わります。</p>
+    <div class="panel">
+      <div class="btn-row" style="flex-wrap:wrap">
+        <button class="btn" id="presetK">本文【カ】の条件（10Hz・3ビット）</button>
+        <button class="btn" id="presetKi">本文【キ】の条件（5Hz・3ビット）</button>
+      </div>
+      <div class="grid c2" style="margin-top:12px">
+        <div>
+          <label class="fld" for="fs">標本化周波数：<span class="mono" id="fsV">10</span> Hz
+            （<span class="mono" id="periodV">0.1</span> 秒ごとに1回）</label>
+          <input type="range" id="fs" min="2" max="20" step="1" value="10">
+          <label class="fld" for="qb" style="margin-top:12px">量子化ビット数：<span class="mono" id="qbV">3</span> ビット
+            （<span class="mono" id="stepV">8</span> 段階）</label>
+          <input type="range" id="qb" min="1" max="4" step="1" value="3">
+          <label class="fld" for="waveSel" style="margin-top:12px">波形</label>
+          <select class="sel" id="waveSel">
+            <option value="book" selected>本文の図1と同じ波形</option>
+            <option value="sin">きれいな波（正弦波）</option>
+            <option value="mix">2つの音が重なった波</option>
+          </select>
+        </div>
+        <div>
+          <div id="sampBox"></div>
+          <div class="legend" style="display:flex;gap:14px;font-size:.82rem;margin-top:6px;flex-wrap:wrap">
+            <span style="color:#858a92">— もとのアナログ波形</span>
+            <span style="color:#8a5a00">● 標本化した点</span>
+            <span style="color:#123a6b">● 量子化した段階値</span>
+          </div>
+        </div>
+      </div>
+      <p class="qhead" style="margin-top:16px">符号化した結果（時刻0から順に）</p>
+      <div class="bitout" id="bitOut"></div>
+      <div class="metrics" style="margin-top:12px">
+        <div class="metric"><div class="k">読み取った段階値</div><div class="v" id="mLevels" style="font-size:1.05rem">—</div></div>
+        <div class="metric"><div class="k">先頭12ビット</div><div class="v mono" id="mHead12" style="font-size:1.05rem">—</div></div>
+        <div class="metric"><div class="k">もとの波形とのずれ（平均）</div><div class="v" id="mErr" style="font-size:1.05rem">—</div></div>
+      </div>
+      <div class="note" id="sampNote" style="margin-top:10px"></div>
+    </div>
+  </section>
+
+  <section class="step" id="step2">
+    <h2><span class="no">STEP 2</span>データ量を計算する</h2>
+    <p class="desc">音のデータ量は <strong>標本化周波数 × 量子化ビット数 × チャンネル数 × 秒数</strong> で求まります（PCM方式）。</p>
+    <div class="panel">
+      <div class="btn-row" style="flex-wrap:wrap">
+        <button class="btn" id="presetCD">音楽CD（44.1kHz・16ビット・2ch・60秒）</button>
+        <button class="btn" id="presetHR">ハイレゾ（88.2kHz・24ビット・2ch・60秒）</button>
+        <button class="btn" id="presetTel">電話（8kHz・8ビット・1ch・60秒）</button>
+      </div>
+      <div class="grid c2" style="margin-top:12px">
+        <div>
+          <label class="fld" for="dFs">標本化周波数（Hz）</label>
+          <input type="number" id="dFs" value="44100" min="1" step="100" class="mono">
+          <label class="fld" for="dQb" style="margin-top:10px">量子化ビット数（ビット）</label>
+          <input type="number" id="dQb" value="16" min="1" step="1" class="mono">
+          <label class="fld" for="dCh" style="margin-top:10px">チャンネル数</label>
+          <input type="number" id="dCh" value="2" min="1" step="1" class="mono">
+          <label class="fld" for="dSec" style="margin-top:10px">時間（秒）</label>
+          <input type="number" id="dSec" value="60" min="1" step="1" class="mono">
+        </div>
+        <div>
+          <div class="eqbox" id="dEq">—</div>
+          <div class="metrics" style="margin-top:12px">
+            <div class="metric"><div class="k">データ量</div><div class="v" id="dMB" style="font-size:1.5rem">—</div></div>
+            <div class="metric"><div class="k">音楽CD（10.584MB）の何倍か</div><div class="v" id="dRatio" style="font-size:1.2rem">—</div></div>
+          </div>
+          <div class="note info" id="dNote" style="margin-top:12px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="step" id="step3">
+    <h2><span class="no">STEP 3</span>本文の空欄【ア】〜【エ】を確かめる（問1）</h2>
+    <div class="panel" id="blankBox"></div>
+    <div class="note" id="blankNote" style="margin-top:10px"></div>
+  </section>
+
+  <section class="step" id="step4">
+    <h2><span class="no">STEP 4</span>a〜e の記述を判定する（問2）</h2>
+    <p class="desc">1つずつ ○ か × を選んでください。すべて選ぶと、正しいものが何個かが分かります。</p>
+    <div class="panel">
+      <div class="abcde" id="jBox"></div>
+      <div class="note" id="jNote" style="margin-top:12px"></div>
+    </div>
+  </section>
+
+  <section class="step" id="step5">
+    <h2><span class="no">STEP 5</span>先頭12ビットを答える（問3）</h2>
+    <p class="desc">STEP 1 で条件を切り替えて確かめてから選びましょう。</p>
+    <div class="panel" id="q3Box"></div>
+    <div class="note" id="q3Note" style="margin-top:10px"></div>
+  </section>
+
+  <section class="step" id="glossary">
+    <h2><span class="no">用語</span>この節で出てくることば</h2>
+    <div class="panel"><div id="glossBox"></div></div>
+  </section>
+
+  <section class="step" id="wrap">
+    <h2><span class="no">まとめ</span>おさえておきたいこと</h2>
+    <div class="panel">
+      <ul class="bullets">
+        <li>音のデジタル化は <strong>標本化 → 量子化 → 符号化</strong> の3ステップ（PCM方式）。</li>
+        <li><strong>標本化周波数</strong>は1秒あたりの標本化の回数（Hz）。<strong>標本化周期</strong>はその逆数で、標本化する時間間隔。混同しやすいので注意。</li>
+        <li>標本化周期が<strong>小さい</strong>ほど、量子化ビット数が<strong>大きい</strong>ほど、もとの波形に近づく。ただしデータ量は増える。</li>
+        <li>量子化ビット数 n ビットなら <span class="mono">2<sup>n</sup></span> 段階。16ビットなら 2<sup>16</sup>＝65,536段階。</li>
+        <li>データ量（ビット）＝ 標本化周波数 × 量子化ビット数 × チャンネル数 × 秒数。8で割ればバイト。</li>
+        <li>音楽CDは 44.1kHz・16ビット・2ch。1分で約10.6MB。ハイレゾ（88.2kHz・24ビット）はその3倍。</li>
+      </ul>
+    </div>
+  </section>

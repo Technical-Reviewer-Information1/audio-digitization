@@ -1,0 +1,44 @@
+.qhead{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px}
+.card-q{border:1px solid var(--rule); background:var(--paper); padding:18px; margin-bottom:14px}
+.q-scene{font-size:1rem; font-weight:700; line-height:1.9}
+.choice4{display:grid; gap:8px; grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.choice4 .btn{text-align:left; line-height:1.65; padding:11px 13px}
+.choice4 .btn.correct{background:var(--ok-bg); border-color:var(--ok); color:var(--ok)}
+.choice4 .btn.wrong{background:var(--ng-bg); border-color:var(--ng); color:var(--ng)}
+.choice4.locked{pointer-events:none}
+.sel{width:100%; font-family:inherit; font-size:.95rem; padding:9px 11px; min-height:42px;
+  border:1px solid var(--ink-3); border-radius:2px; background:var(--paper); color:var(--ink)}
+input[type=range]{width:100%; accent-color:var(--accent); height:34px}
+.why{font-size:.85rem; color:var(--ink-2); line-height:1.85}
+.eqbox{font-family:var(--mono); font-size:1.02rem; font-weight:700; text-align:center; padding:14px;
+  border:1px solid var(--rule); background:var(--paper-2); line-height:1.8}
+.blankin{border:1.5px solid var(--accent); background:#fff; padding:6px 8px; text-align:center;
+  font-family:var(--mono); min-height:38px; font-size:.95rem; max-width:120px}
+.blankin.ok{border-color:var(--ok); background:var(--ok-bg)}
+.blankin.ng{border-color:var(--ng); background:var(--ng-bg)}
+table.tbl td .blankin{width:100%; max-width:none}
+
+/* --- 5-8 音のデジタル表現 --- */
+#sampBox{border:1px solid var(--rule);background:var(--paper)}
+#sampBox svg{display:block;margin:0 auto}
+svg .axis{stroke:#c9c5bd;stroke-width:1}
+svg .grid{stroke:#ebe8e2;stroke-width:1}
+svg .stem{stroke:#8a5a00;stroke-width:1.4;stroke-dasharray:3 3}
+svg .qdot{fill:#123a6b}
+svg .sdot{fill:#8a5a00}
+svg .axlab{font-size:10px;fill:#858a92;font-family:monospace}
+svg .lvlab{font-size:9.5px;fill:#858a92;font-family:monospace}
+.bitout{font-family:var(--mono);font-size:1.05rem;font-weight:700;letter-spacing:.04em;
+  border:1px solid var(--rule);background:var(--paper-2);padding:12px 14px;word-break:break-all;line-height:2}
+.bitout .g{display:inline-block;margin-right:.7em}
+.bitout .g.head{color:#123a6b}
+.abcde{border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.abcde > div{border-top:1px solid var(--line);padding:10px 12px}
+.abcde > div:first-child{border-top:0}
+.abcde .st{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.abcde .st .k{font-weight:700;font-family:var(--mono);min-width:1.4em}
+.abcde .st .t{flex:1;min-width:12em}
+.abcde .jb{display:flex;gap:6px}
+.abcde .jb .btn{min-width:3.4em;padding:6px 10px;text-align:center}
+svg .ana{stroke:#858a92;stroke-width:2;fill:none}
+svg .dig{stroke:#123a6b;stroke-width:2.2;fill:none}
