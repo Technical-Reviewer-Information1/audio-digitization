@@ -124,7 +124,7 @@
   function drawBlanks() {
     $('blankBox').innerHTML = BLANKS.map((b, i) =>
       '<div' + (i ? ' style="margin-top:18px;padding-top:16px;border-top:1px solid var(--line)"' : '') + '>' +
-      '<p class="qhead" style="margin:0 0 8px">【' + b.k + '】　' + b.q + '</p>' +
+      '<p class="pq">【' + b.k + '】　' + b.q + '</p>' +
       '<div class="choice4" data-i="' + i + '">' + b.ch.map((c, j) =>
         '<button class="btn" data-i="' + i + '" data-c="' + c + '" style="text-align:center">' + '⓪①②③④⑤'[j] + '　' + c + '</button>').join('') +
       '</div><div class="note" id="bfb' + i + '" hidden></div></div>').join('');
@@ -201,7 +201,7 @@
   function drawQ3() {
     $('q3Box').innerHTML = Q3.map((q, i) =>
       '<div' + (i ? ' style="margin-top:18px;padding-top:16px;border-top:1px solid var(--line)"' : '') + '>' +
-      '<p class="qhead" style="margin:0 0 8px">【' + q.k + '】　' + q.q + '</p>' +
+      '<p class="pq">【' + q.k + '】　' + q.q + '</p>' +
       '<div class="choice4" data-i="' + i + '">' + CH12.map((c, j) =>
         '<button class="btn mono" data-i="' + i + '" data-c="' + c + '" style="text-align:center">' + '⓪①②③④⑤'[j] + '　' + c + '</button>').join('') +
       '</div><div class="note" id="qfb' + i + '" hidden></div></div>').join('');
