@@ -237,5 +237,18 @@
     drawSamp(); drawData(); drawBlanks(); drawJudge(); drawQ3();
     window.Terms.attach();
   }
+  if (window.Predict) Predict.make('pdA', {
+    q: '<strong>標本化周波数を2倍</strong>にして、さらに<strong>量子化ビット数も2倍</strong>にしました。データ量は何倍になるでしょう？',
+    type: 'pick',
+    ch: ['2倍', '3倍', '4倍', '変わらない'],
+    answer: function () { return 2; },
+    show: function () {
+      return 'データ量 ＝ <span class="mono">標本化周波数 × 量子化ビット数 × 時間 × チャンネル数</span>。' +
+             'かけ算なので <span class="mono">2 × 2 ＝ <strong>4倍</strong></span> です。';
+    },
+    why: '「2つとも2倍だから2倍」と答えたくなりますが、<strong>かけ算でつながっているので倍率もかけ算</strong>になります。' +
+         'これがCDの音源が大きくなりやすい理由です。ステレオ（2チャンネル）ならさらに2倍になります。'
+  });
+
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
